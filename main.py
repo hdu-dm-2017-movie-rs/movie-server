@@ -1,12 +1,14 @@
+import json
+from copy import deepcopy
 from flask import Flask
 from flask import url_for
 from flask import request
 from flask import make_response
 from flask import render_template
 import requests
-import json
 import numpy as np
-# import ml
+import ml
+
 
 app = Flask(__name__)
 in_theaters = 'http://api.douban.com/v2/movie/in_theaters?count=100'
@@ -73,20 +75,8 @@ def to_list(json_data):
 
 def to_json(list_data, header=['movieName', 'movieId', 'rank', 'genres']):
     '''把二维list电影数据转换为json，对外提供接口'''
-    data = [
-        ['大世界', 26954003, 3.75, 'Animation'],
-        ['无问西东', 6874741, 0.0, 'Drama|Romance|War'],
-        ['迷镇凶案', 2133433, 3.15, 'Comedy|Crime|Mystery'],
-        ['大寒', 26392877, 0.0, 'Drama|War'],
-        ['无法触碰的爱', 27621048, 0.0, 'Drama|Romance'],
-        ['青蛙总动员', 26752895, 1.7, 'Comedy|Animation'],
-        ['芒刺', 27601920, 0.0, 'Drama'],
-        ['第一夫人', 4849728, 3.3, 'Drama'],
-        ['神秘巨星', 26942674, 4.15, 'Drama|Musical'],
-        ['公牛历险记', 25846857, 3.75, 'Comedy|Animation|Adventure']
-    ]
     try:
-        list_data = data
+        # list_data = data
         subjects = []
         for item in list_data:
             obj = {}
@@ -98,7 +88,6 @@ def to_json(list_data, header=['movieName', 'movieId', 'rank', 'genres']):
         return {'count': 0, 'error': err.args[0]}
 
     return {'subjects': subjects, 'count': len(list_data)}
-    
 
 
 def get_movie_data(url):
@@ -110,40 +99,80 @@ def get_movie_data(url):
 
 def get_movie_rs(user_data):
     '''训练某个用户的推荐系统模型'''
-    # reshape = Reshape()
-    # x_train, y_train = reshape.reshape_train(user_data)
-    # rs = MovieRS()
-    # rs.fit(x_train, y_train)
-    # return rs
+    reshape = ml.Reshape()
+    x_train, y_train = reshape.reshape_train(user_data)
+    rs = ml.MovieRS()
+    # 训练用户画像
+    rs.fit(x_train, y_train)
+    return rs
 
 
-def recommad_movies(rs, recommad_data, n=10):
+def get_recommend_data(rs, recommend, n=10):
+    '''从候选电影中给该用户推荐电影'''
+    reshape = ml.Reshape()
+    x_test, y_test = reshape.user_matrix(recommend)
+    movies = rs.predict(x_test, recommend, n)
+    # print('y_test', y_test)
+    return movies
+
+
+def recommend_movies(rs, recommend_data, n=10):
     '''根据该用户模型和候选电影推荐适合电影'''
     # x_test, y_test = reshape.user_matrix(recommad_data)
     # return rs.predict(x_test, recommad, n)
+    pass
 
 
-test_data = [['1', '26662193', '3.1', 'Comedy'],
-             ['2', '26862829', '3.9', 'Drama|War'],
-             ['3', '26966580', '2.4', 'Comedy'],
-             ['4', '5350027', '3.45', 'Drama|Mystery'],
-             ['5', '26797419', '3.1', 'Comedy'],
-             ['6', '26654146', '2.7', 'Drama'],
-             ['7', '20495023', '4.55', 'Comedy|Animation|Adventure'],
-             ['8', '26340419', '4.15', 'Comedy|Animation'],
-             ['9', '26774722', '3.05', 'Action|Crime|Mystery'],
-             ['10', '26729868', '2.5', 'Drama|Action|Sci-Fi'],
-             ['11', '26887161', '0.0', "Children's|Animation"],
-             ['12', '25837262', '4.3', 'Drama|Animation'],
-             ['13', '27193475', '0.0', "Children's|Animation"],
-             ['14', '26661191', '2.4', 'Action'],
-             ['15', '26761416', '4.3', 'Drama']]
+test_user_data = [['21', '5350027', '3.45', 'Drama|Mystery'],
+                  ['22', '26797419', '3.1', 'Comedy'],
+                  ['23', '26654146', '2.7', 'Drama'],
+                  ['24', '20495023', '4.55', 'Comedy|Animation|Adventure'],
+                  ['25', '26340419', '4.15', 'Comedy|Animation'],
+                  ['26', '26661191', '2.4', 'Action'],
+                  ['27', '26761416', '4.3', 'Drama']]
+
+test_recommend_data = [['1', '26662193', '3.1', 'Comedy'],
+                       ['2', '26862829', '3.9', 'Drama|War'],
+                       ['3', '26966580', '2.4', 'Comedy'],
+                       ['4', '5350027', '3.45', 'Drama|Mystery'],
+                       ['5', '26797419', '3.1', 'Comedy'],
+                       ['6', '26654146', '2.7', 'Drama'],
+                       ['7', '20495023', '4.55', 'Comedy|Animation|Adventure'],
+                       ['8', '26340419', '4.15', 'Comedy|Animation'],
+                       ['9', '26774722', '3.05', 'Action|Crime|Mystery'],
+                       ['10', '26729868', '2.5', 'Drama|Action|Sci-Fi'],
+                       ['11', '26887161', '0.0', "Children's|Animation"],
+                       ['12', '25837262', '4.3', 'Drama|Animation'],
+                       ['13', '27193475', '0.0', "Children's|Animation"],
+                       ['14', '26661191', '2.4', 'Action'],
+                       ['15', '26761416', '4.3', 'Drama']]
+
+test_recommend_data = [
+    ['大世界', 26954003, 3.75, 'Animation'],
+    ['无问西东', 6874741, 0.0, 'Drama|Romance|War'],
+    ['迷镇凶案', 2133433, 3.15, 'Comedy|Crime|Mystery'],
+    ['大寒', 26392877, 0.0, 'Drama|War'],
+    ['无法触碰的爱', 27621048, 0.0, 'Drama|Romance'],
+    ['青蛙总动员', 26752895, 1.7, 'Comedy|Animation'],
+    ['芒刺', 27601920, 0.0, 'Drama'],
+    ['第一夫人', 4849728, 3.3, 'Drama'],
+    ['神秘巨星', 26942674, 4.15, 'Drama|Musical'],
+    ['公牛历险记', 25846857, 3.75, 'Comedy|Animation|Adventure']
+]
 
 
-@app.route('/', methods=['POST'])
+@app.route('/api', methods=['POST'])
 def root():
     '''对外提供推荐系统api'''
-    resp = make_response(json.dumps(to_json(test_data)))
+
+    user_data = deepcopy(test_user_data)
+    recommend_data = deepcopy(test_recommend_data)
+
+    # 推荐
+    rs = get_movie_rs(user_data)
+    movies = get_recommend_data(rs, recommend_data, n=10)
+    print(movies)
+    resp = make_response(json.dumps(to_json(movies)))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
@@ -151,19 +180,10 @@ def root():
 @app.route('/test', methods=['POST'])
 def test():
     '''测试用api，返回静态数据'''
-    resp = make_response(json.dumps(to_json(test_data)))
+    resp = make_response(json.dumps(to_json(test_recommend_data)))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 5000)
-    # data = to_json(None)
-    # print(data)
-
-    # 训练模型
-    # reshape = ml.Reshape()
-    # user_data = []
-    # x_train, y_train = reshape.reshape_train(user_data)
-    # rs = ml.MovieRS()
-    # rs.fit(x_train, y_train)
