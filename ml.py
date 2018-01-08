@@ -86,7 +86,10 @@ if __name__ == '__main__':
                 ['25','26340419', '4.15', 'Comedy|Animation'],
                 ['26','26661191', '2.4', 'Action'],
                 ['27','26761416', '4.3', 'Drama']]
-
+    reshape = Reshape()
+    x_train, y_train = reshape.reshape_train(user)
+    rs = MovieRS()
+    rs.fit(x_train, y_train)
 
 
     recommad = [['1', '26662193','3.1','Comedy'],
