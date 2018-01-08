@@ -99,6 +99,7 @@ def to_json(list_data, header=['movieId', 'movieName', 'rank', 'genres']):
         return {'count': 0, 'error': err.args[0]}
 
     return {'subjects': subjects, 'count': len(list_data)}
+    
 
 
 def get_movie_data(url):
