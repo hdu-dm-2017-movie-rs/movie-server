@@ -8,7 +8,6 @@ import json
 import numpy as np
 # import ml
 
-
 app = Flask(__name__)
 in_theaters = 'http://api.douban.com/v2/movie/in_theaters?count=100'
 coming_soon = 'http://api.douban.com/v2/movie/coming_soon?count=100'
@@ -72,7 +71,7 @@ def to_list(json_data):
     return data
 
 
-def to_json(list_data, header=['movieId', 'movieName', 'rank', 'genres']):
+def to_json(list_data, header=['movieName', 'movieId', 'rank', 'genres']):
     '''把二维list电影数据转换为json，对外提供接口'''
     data = [
         ['大世界', 26954003, 3.75, 'Animation'],
