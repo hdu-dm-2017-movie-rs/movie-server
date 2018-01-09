@@ -152,7 +152,20 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         arr = []
         for k in header:
             arr.append(v.get(k))
-            print(v.get(k))
+            # 中文转英文
+            if k == 'genres':
+                string = ''
+                for genre in v.get['genres']:
+                    # 中文转英文
+                    genre = transform(genre, 'en')
+                    if genre is not None and genre != '(no genres listed)':
+                        string += genre
+                        string += '|'
+                if string == '':
+                    continue
+                string = string[:-1]
+                
+            print(k)
         # arr.append(v.get['movieName'])
         # arr.append(int(v.get['movieId']))
         # arr.append(float(v.get['rank']) / 2)
@@ -248,7 +261,7 @@ model = init_movie_rs()
 
 def get_recommend_movies(rs, user_data, recommend_data, n=5):
     '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
-    print('247')      
+    print('247')
     user_movies = rs.predict(user_data, n)
     return rs.CosineSim(recommend_data, user_movies)
 
@@ -270,7 +283,7 @@ def api():
         print(type(data.get('user')))
         print(type(data.get('recommend')))
         print()
-        print()        
+        print()
         # print(data)
         print(type(data))
         print()
@@ -291,9 +304,11 @@ def api():
         print()
         print()
 
-        user_list = json_to_list(user_data, header=['movieName', 'movieId', 'ranting', 'genres'])
-        print('271')        
-        recommend_list = json_to_list(recommend_data, header=['movieName', 'movieId', 'rank', 'genres'])
+        user_list = json_to_list(
+            user_data, header=['movieName', 'movieId', 'ranting', 'genres'])
+        print('271')
+        recommend_list = json_to_list(recommend_data, header=[
+                                      'movieName', 'movieId', 'rank', 'genres'])
         print('273')
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         print('get_recommend_movies end')
