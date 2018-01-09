@@ -1,4 +1,6 @@
+# encoding=utf8
 import json
+import sys
 from flask import Flask
 from flask import url_for
 from flask import request
@@ -263,12 +265,24 @@ def api():
         # java给的接口{"user": {...}, "recommend":{...}}
         data = json.loads(str(request.get_data(), 'utf-8'))
         print(data)
+        print(type(data))
+        print()
+        print()
+        print()
         user_data = data['user']
         recommend_data = data['recommend']
         print('269')
 
         print(user_data)
+        print(type(user_data))
+        print()
+        print()
+        print()
         print(recommend_data)
+        print(type(recommend_data)))
+        print()
+        print()
+        print()
 
         user_list = json_to_list(user_data)
         print('271')        
@@ -295,7 +309,7 @@ def api():
 
         temp_json = list_to_json(new_movies, header=[
                                  'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
-        resp = make_response(jsonify(temp_json))
+        resp = make_response(jsonify(temp_json).encoding('utf8'))
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
@@ -315,7 +329,7 @@ def test2():
     movies = douban_movies_to_list(requests.get(one_movie).json())
     temp_json = list_to_json(
         movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
-    resp = make_response(jsonify(temp_json))
+    resp = make_response(jsonify(temp_json).encoding('utf8'))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     # request.data 表示请求体
     print(request.get_data())
