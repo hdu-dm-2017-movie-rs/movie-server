@@ -7,14 +7,14 @@ from flask import make_response
 from flask import render_template
 import requests
 import numpy as np
-# import ml
+import ml
 
 
 app = Flask(__name__)
 in_theaters = 'http://api.douban.com/v2/movie/in_theaters?count=100'
 coming_soon = 'http://api.douban.com/v2/movie/coming_soon?count=100'
-
 one_movie = 'http://api.douban.com/v2/movie/subject/1764796'
+
 test_user_data = [['21', '5350027', '3.45', 'Drama|Mystery'],
                   ['22', '26797419', '3.1', 'Comedy'],
                   ['23', '26654146', '2.7', 'Drama'],
@@ -121,8 +121,6 @@ def to_list(json_data):
 
     return data
 
-# def movies_to_
-
 
 def to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres']):
     '''把二维list电影数据转换为json dict，对外提供接口'''
@@ -169,7 +167,7 @@ def movies_to_list(json_data):
             arr.append('')
         else:
             arr.append(summary)
-            
+
         data.append(arr)
         return data
 
@@ -198,7 +196,7 @@ def movies_to_list(json_data):
             arr.append('')
         else:
             arr.append(summary)
-            
+
         data.append(arr)
 
     return data
@@ -236,10 +234,38 @@ def get_movie_data(urls):
 
 def recommend_movies(rs, recommend_data, n=10):
     '''根据该用户模型和候选电影推荐适合电影'''
-    # x_test, y_test = reshape.user_matrix(recommad_data)
-    # return rs.predict(x_test, recommad, n)
     pass
 
+
+def init_movie_rs():
+    '''初始化推荐系统，返回模型'''
+    x_train, y_train = ml.reshape_train()
+    rs = ml.MovieRS()
+    rs.fit(x_train, y_train)
+    return rs
+
+
+model = init_movie_rs()
+
+
+def get_recommend_movies(rs, user_data, recommend_data, n=5):
+    '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
+    user_movies = rs.predict(user_data, n)
+    return rs.CosineSim(recommend_data, user_movies)
+
+@app.route('/api', methods=['POST'])
+def root():
+    '''对外提供推荐系统api'''
+    user_data = deepcopy(test_user_data)
+    recommend_data = deepcopy(test_recommend_data)
+
+    # 推荐
+    data = json.loads(request.data)
+
+    movies = get_recommend_movies(model, user_data, recommend_data, 10)
+    resp = make_response(json.dumps(to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+    resp.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return resp
 
 # @app.route('/api', methods=['POST'])
 # def root():
@@ -252,7 +278,8 @@ def recommend_movies(rs, recommend_data, n=10):
 #     movies = get_recommend_data(rs, recommend_data, n=10)
 #     print(movies)
 
-#     resp = make_response(json.dumps(to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+#     resp = make_response(json.dumps(to_json(
+#         movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
 #     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
 #     return resp
 
@@ -265,11 +292,13 @@ def test():
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
+
 @app.route('/test2', methods=['GET', 'POST'])
 def test2():
     '''测试用api，返回静态数据'''
     movies = movies_to_list(requests.get(one_movie).json())
-    resp = make_response(json.dumps(to_json(movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+    resp = make_response(json.dumps(to_json(movies,  header=[
+                         'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     # request.data 表示请求体
     app.logger.error(request.data)
@@ -278,10 +307,11 @@ def test2():
 
 
 if __name__ == '__main__':
+
     app.run('0.0.0.0', 5000)
     # movies = movies_to_list(requests.get(one_movie).json())
     # print(to_json(movies,  header=[
-        # 'movieName', 'movieId', 'rating', 'genres', 'img', 'summary']))
+    # 'movieName', 'movieId', 'rating', 'genres', 'img', 'summary']))
     # user_data = deepcopy(test_user_data)
     # recommend_data = deepcopy(test_recommend_data)
 
