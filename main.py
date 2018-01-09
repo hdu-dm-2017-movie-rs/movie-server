@@ -7,7 +7,7 @@ from flask import make_response
 from flask import render_template
 import requests
 import numpy as np
-import ml
+# import ml
 
 
 app = Flask(__name__)
@@ -93,32 +93,32 @@ def to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres', 'img'
 
 def get_movie_data(urls):
     '''封装了豆瓣api获取所需要的电影数据，返回适合推荐系统训练的二维list'''
-    # movies_data = []    
+    # movies_data = []
     # for url in urls:
     #     json_data = requests.get(url).json()
     #     to_json
     return 
 
 
-def get_movie_rs(user_data):
-    '''训练某个用户的推荐系统模型'''
-    reshape = ml.Reshape()
-    x_train, y_train = reshape.reshape_train(user_data)
-    rs = ml.MovieRS()
-    # 训练用户画像
-    rs.fit(x_train, y_train)
-    return rs
+# def get_movie_rs(user_data):
+#     '''训练某个用户的推荐系统模型'''
+#     reshape = ml.Reshape()
+#     x_train, y_train = reshape.reshape_train(user_data)
+#     rs = ml.MovieRS()
+#     # 训练用户画像
+#     rs.fit(x_train, y_train)
+#     return rs
 
 
-def get_recommend_data(rs, recommend, n=10):
-    '''从候选电影中给该用户推荐电影'''
-    reshape = ml.Reshape()
-    x_test, y_test = reshape.user_matrix(recommend)
-    movies = rs.predict(x_test, recommend, n)
+# def get_recommend_data(rs, recommend, n=10):
+#     '''从候选电影中给该用户推荐电影'''
+#     reshape = ml.Reshape()
+#     x_test, y_test = reshape.user_matrix(recommend)
+#     movies = rs.predict(x_test, recommend, n)
 
-    # 查找movies相关的电影数据
+#     # 查找movies相关的电影数据
 
-    return movies
+#     return movies
 
 
 def recommend_movies(rs, recommend_data, n=10):
@@ -169,7 +169,6 @@ test_recommend_data = [
 @app.route('/api', methods=['POST'])
 def root():
     '''对外提供推荐系统api'''
-
     user_data = deepcopy(test_user_data)
     recommend_data = deepcopy(test_recommend_data)
 
