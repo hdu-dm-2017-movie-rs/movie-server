@@ -262,12 +262,14 @@ def api():
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
         data = json.loads(str(request.get_data(), 'utf-8'))
-        print('get_recommend_movies')
-
+        print(data)
         user_data = data['user']
-        print('267')
         recommend_data = data['recommend']
         print('269')
+
+        print(user_data)
+        print(recommend_data)
+
         user_list = json_to_list(user_data)
         print('271')        
         recommend_list = json_to_list(recommend_data)
@@ -297,7 +299,7 @@ def api():
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
-        print(request.get_data())
+        # print(request.get_data())
         print(err)
         return error_res("api error")
 
