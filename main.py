@@ -14,6 +14,54 @@ app = Flask(__name__)
 in_theaters = 'http://api.douban.com/v2/movie/in_theaters?count=100'
 coming_soon = 'http://api.douban.com/v2/movie/coming_soon?count=100'
 
+one_movie = 'http://api.douban.com/v2/movie/subject/1764796'
+test_user_data = [['21', '5350027', '3.45', 'Drama|Mystery'],
+                  ['22', '26797419', '3.1', 'Comedy'],
+                  ['23', '26654146', '2.7', 'Drama'],
+                  ['24', '20495023', '4.55', 'Comedy|Animation|Adventure'],
+                  ['25', '26340419', '4.15', 'Comedy|Animation'],
+                  ['26', '26661191', '2.4', 'Action'],
+                  ['27', '26761416', '4.3', 'Drama']]
+
+test_recommend_data = [['1', '26662193', '3.1', 'Comedy'],
+                       ['2', '26862829', '3.9', 'Drama|War'],
+                       ['3', '26966580', '2.4', 'Comedy'],
+                       ['4', '5350027', '3.45', 'Drama|Mystery'],
+                       ['5', '26797419', '3.1', 'Comedy'],
+                       ['6', '26654146', '2.7', 'Drama'],
+                       ['7', '20495023', '4.55', 'Comedy|Animation|Adventure'],
+                       ['8', '26340419', '4.15', 'Comedy|Animation'],
+                       ['9', '26774722', '3.05', 'Action|Crime|Mystery'],
+                       ['10', '26729868', '2.5', 'Drama|Action|Sci-Fi'],
+                       ['11', '26887161', '0.0', "Children's|Animation"],
+                       ['12', '25837262', '4.3', 'Drama|Animation'],
+                       ['13', '27193475', '0.0', "Children's|Animation"],
+                       ['14', '26661191', '2.4', 'Action'],
+                       ['15', '26761416', '4.3', 'Drama']]
+
+test_recommend_data = [
+    ['大世界', 26954003, 3.75, 'Animation',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['无问西东', 6874741, 0.0, 'Drama|Romance|War',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['迷镇凶案', 2133433, 3.15, 'Comedy|Crime|Mystery',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['大寒', 26392877, 0.0, 'Drama|War',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['无法触碰的爱', 27621048, 0.0, 'Drama|Romance',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['青蛙总动员', 26752895, 1.7, 'Comedy|Animation',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['芒刺', 27601920, 0.0, 'Drama',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['第一夫人', 4849728, 3.3, 'Drama',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['神秘巨星', 26942674, 4.15, 'Drama|Musical',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试'],
+    ['公牛历险记', 25846857, 3.75, 'Comedy|Animation|Adventure',
+        'https://img3.doubanio.com/view/photo/m/public/p2221186392.webp', '简介测试']
+]
+
 
 def transform(genre, lang='cn'):
     '''电影类型的中英文互转'''
@@ -51,7 +99,7 @@ def transform(genre, lang='cn'):
 
 
 def to_list(json_data):
-    '''把豆瓣电影类型格式为适合推荐系统的数据结构二维list，过滤到无类型电影，并把电影类型转为英文'''
+    '''把豆瓣电影类型格式为适合推荐系统的数据结构二维list，过滤无类型电影，并把电影类型转为英文'''
     data = []
     for v in json_data['subjects']:
         arr = []
@@ -59,23 +107,25 @@ def to_list(json_data):
         arr.append(int(v['id']))
         arr.append(float(v['rating']['average']) / 2)
         # arr.append(v['images']['large'])
-        str = ''
+        string = ''
         for genre in v['genres']:
             genre = transform(genre, 'en')
             if genre is not None and genre != '(no genres listed)':
-                str += genre
-                str += '|'
-        str = str[:-1]
-        if str == '':
+                string += genre
+                string += '|'
+        string = string[:-1]
+        if string == '':
             continue
-        arr.append(str)
+        arr.append(string)
         data.append(arr)
 
     return data
 
+# def movies_to_
 
-def to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary']):
-    '''把二维list电影数据转换为json，对外提供接口'''
+
+def to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres']):
+    '''把二维list电影数据转换为json dict，对外提供接口'''
     try:
         # list_data = data
         subjects = []
@@ -91,13 +141,76 @@ def to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres', 'img'
     return {'subjects': subjects, 'count': len(list_data)}
 
 
+def movies_to_list(json_data):
+    '''把豆瓣json转换为可以推荐的list格式'''
+    data = []
+    # 这里处理单个电影数据
+    if json_data.get('count') == None:
+        print('单条数据')
+        arr = []
+        v = json_data
+        arr.append(v['title'])
+        arr.append(int(v['id']))
+        arr.append(float(v['rating']['average']) / 2)
+
+        string = ''
+        for genre in v['genres']:
+            genre = transform(genre, 'en')
+            if genre is not None and genre != '(no genres listed)':
+                string += genre
+                string += '|'
+        string = string[:-1]
+        if string == '':
+            return []
+        arr.append(string)
+        arr.append(v['images']['large'])
+        summary = v.get('summary')
+        if summary is None:
+            arr.append('')
+        else:
+            arr.append(summary)
+            
+        data.append(arr)
+        return data
+
+    print(json_data.get('count'))
+
+    # 这里处理多个电影数据
+    for v in json_data['subjects']:
+        arr = []
+        arr.append(v['title'])
+        arr.append(int(v['id']))
+        arr.append(float(v['rating']['average']) / 2)
+
+        string = ''
+        for genre in v['genres']:
+            genre = transform(genre, 'en')
+            if genre is not None and genre != '(no genres listed)':
+                string += genre
+                string += '|'
+        string = string[:-1]
+        if string == '':
+            continue
+        arr.append(string)
+        arr.append(v['images']['large'])
+        summary = v.get('summary')
+        if summary is None:
+            arr.append('')
+        else:
+            arr.append(summary)
+            
+        data.append(arr)
+
+    return data
+
+
 def get_movie_data(urls):
     '''封装了豆瓣api获取所需要的电影数据，返回适合推荐系统训练的二维list'''
     # movies_data = []
     # for url in urls:
     #     json_data = requests.get(url).json()
     #     to_json
-    return 
+    return
 
 
 # def get_movie_rs(user_data):
@@ -128,70 +241,47 @@ def recommend_movies(rs, recommend_data, n=10):
     pass
 
 
-test_user_data = [['21', '5350027', '3.45', 'Drama|Mystery'],
-                  ['22', '26797419', '3.1', 'Comedy'],
-                  ['23', '26654146', '2.7', 'Drama'],
-                  ['24', '20495023', '4.55', 'Comedy|Animation|Adventure'],
-                  ['25', '26340419', '4.15', 'Comedy|Animation'],
-                  ['26', '26661191', '2.4', 'Action'],
-                  ['27', '26761416', '4.3', 'Drama']]
+# @app.route('/api', methods=['POST'])
+# def root():
+#     '''对外提供推荐系统api'''
+#     user_data = deepcopy(test_user_data)
+#     recommend_data = deepcopy(test_recommend_data)
 
-test_recommend_data = [['1', '26662193', '3.1', 'Comedy'],
-                       ['2', '26862829', '3.9', 'Drama|War'],
-                       ['3', '26966580', '2.4', 'Comedy'],
-                       ['4', '5350027', '3.45', 'Drama|Mystery'],
-                       ['5', '26797419', '3.1', 'Comedy'],
-                       ['6', '26654146', '2.7', 'Drama'],
-                       ['7', '20495023', '4.55', 'Comedy|Animation|Adventure'],
-                       ['8', '26340419', '4.15', 'Comedy|Animation'],
-                       ['9', '26774722', '3.05', 'Action|Crime|Mystery'],
-                       ['10', '26729868', '2.5', 'Drama|Action|Sci-Fi'],
-                       ['11', '26887161', '0.0', "Children's|Animation"],
-                       ['12', '25837262', '4.3', 'Drama|Animation'],
-                       ['13', '27193475', '0.0', "Children's|Animation"],
-                       ['14', '26661191', '2.4', 'Action'],
-                       ['15', '26761416', '4.3', 'Drama']]
+#     # 推荐
+#     rs = get_movie_rs(user_data)
+#     movies = get_recommend_data(rs, recommend_data, n=10)
+#     print(movies)
 
-test_recommend_data = [
-    ['大世界', 26954003, 3.75, 'Animation', 'http://www.baidu.com', '简介测试'],
-    ['无问西东', 6874741, 0.0, 'Drama|Romance|War', 'http://www.baidu.com', '简介测试'],
-    ['迷镇凶案', 2133433, 3.15, 'Comedy|Crime|Mystery', 'http://www.baidu.com', '简介测试'],
-    ['大寒', 26392877, 0.0, 'Drama|War', 'http://www.baidu.com', '简介测试'],
-    ['无法触碰的爱', 27621048, 0.0, 'Drama|Romance', 'http://www.baidu.com', '简介测试'],
-    ['青蛙总动员', 26752895, 1.7, 'Comedy|Animation', 'http://www.baidu.com', '简介测试'],
-    ['芒刺', 27601920, 0.0, 'Drama', 'http://www.baidu.com', '简介测试'],
-    ['第一夫人', 4849728, 3.3, 'Drama', 'http://www.baidu.com', '简介测试'],
-    ['神秘巨星', 26942674, 4.15, 'Drama|Musical', 'http://www.baidu.com', '简介测试'],
-    ['公牛历险记', 25846857, 3.75, 'Comedy|Animation|Adventure', 'http://www.baidu.com', '简介测试']
-]
-
-
-@app.route('/api', methods=['POST'])
-def root():
-    '''对外提供推荐系统api'''
-    user_data = deepcopy(test_user_data)
-    recommend_data = deepcopy(test_recommend_data)
-
-    # 推荐
-    rs = get_movie_rs(user_data)
-    movies = get_recommend_data(rs, recommend_data, n=10)
-    print(movies)
-
-    resp = make_response(json.dumps(to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
-    resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return resp
+#     resp = make_response(json.dumps(to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+#     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
+#     return resp
 
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     '''测试用api，返回静态数据'''
-    resp = make_response(json.dumps(to_json(test_recommend_data, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+    resp = make_response(json.dumps(to_json(test_recommend_data, header=[
+                         'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return resp
+
+@app.route('/test2', methods=['GET', 'POST'])
+def test2():
+    '''测试用api，返回静态数据'''
+    movies = movies_to_list(requests.get(one_movie).json())
+    resp = make_response(json.dumps(to_json(movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+    resp.headers['Content-Type'] = 'application/json; charset=utf-8'
+    # request.data 表示请求体
+    app.logger.error(request.data)
+    print(request.data)
     return resp
 
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 5000)
+    # movies = movies_to_list(requests.get(one_movie).json())
+    # print(to_json(movies,  header=[
+        # 'movieName', 'movieId', 'rating', 'genres', 'img', 'summary']))
     # user_data = deepcopy(test_user_data)
     # recommend_data = deepcopy(test_recommend_data)
 
