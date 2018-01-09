@@ -155,7 +155,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         # arr.append(v['genres'])
 
         data.append(arr)
-
+    print('json_to_list end')
     return data
 
 
@@ -294,9 +294,8 @@ def api():
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
-        # print(request.get_data())
+        print(request.get_data())
         print(err)
-        print(err.args)
         return error_res("api error")
 
 
