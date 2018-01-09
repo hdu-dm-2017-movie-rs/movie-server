@@ -263,14 +263,20 @@ def api():
         base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
+        print('266')
         data = json.loads(str(request.get_data(), 'utf-8'))
+        print(type(data))
+        print(type(data.get('user')))
+        print(type(data.get('recommend')))
+        print()
+        print()        
         print(data)
         print(type(data))
         print()
         print()
         print()
-        user_data = data['user']
-        recommend_data = data['recommend']
+        user_data = data.get('user')
+        recommend_data = data.get('recommend')
         print('269')
 
         print(user_data)
@@ -314,7 +320,7 @@ def api():
         return resp
     except BaseException as err:
         # print(request.get_data())
-        print(err)
+        print('err', err)
         return error_res("api error")
 
 
