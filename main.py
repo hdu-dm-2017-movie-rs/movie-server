@@ -146,16 +146,16 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     if json_data == '' or json_data == None:
         print('json_to_list error')
         return None
+    print('149')
     data = []
     for v in json_data['subjects']:
         arr = []
-        # for k in header:
-            # arr.append(v[k])
-
-        arr.append(v['movieName'])
-        arr.append(int(v['movieId']))
-        arr.append(float(v['rank']) / 2)
-        arr.append(v['genres'])
+        for k in header:
+            arr.append(v.get[k])
+        # arr.append(v.get['movieName'])
+        # arr.append(int(v.get['movieId']))
+        # arr.append(float(v.get['rank']) / 2)
+        # arr.append(v.get['genres'])
 
         data.append(arr)
     print('json_to_list end')
@@ -290,9 +290,9 @@ def api():
         print()
         print()
 
-        user_list = json_to_list(user_data)
+        user_list = json_to_list(user_data, header=['movieName', 'movieId', 'ranting', 'genres'])
         print('271')        
-        recommend_list = json_to_list(recommend_data)
+        recommend_list = json_to_list(recommend_data, header=['movieName', 'movieId', 'rank', 'genres'])
         print('273')
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         print('get_recommend_movies end')
