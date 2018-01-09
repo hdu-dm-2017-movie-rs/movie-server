@@ -98,28 +98,28 @@ def transform(genre, lang='cn'):
     return '(no genres listed)'
 
 
-def to_list(json_data):
-    '''把豆瓣电影类型格式为适合推荐系统的数据结构二维list，过滤无类型电影，并把电影类型转为英文'''
-    data = []
-    for v in json_data['subjects']:
-        arr = []
-        arr.append(v['title'])
-        arr.append(int(v['id']))
-        arr.append(float(v['rating']['average']) / 2)
-        # arr.append(v['images']['large'])
-        string = ''
-        for genre in v['genres']:
-            genre = transform(genre, 'en')
-            if genre is not None and genre != '(no genres listed)':
-                string += genre
-                string += '|'
-        string = string[:-1]
-        if string == '':
-            continue
-        arr.append(string)
-        data.append(arr)
+# def to_list(json_data):
+#     '''把豆瓣电影类型格式为适合推荐系统的数据结构二维list，过滤无类型电影，并把电影类型转为英文'''
+#     data = []
+#     for v in json_data['subjects']:
+#         arr = []
+#         arr.append(v['title'])
+#         arr.append(int(v['id']))
+#         arr.append(float(v['rating']['average']))
+#         # arr.append(v['images']['large'])
+#         string = ''
+#         for genre in v['genres']:
+#             genre = transform(genre, 'en')
+#             if genre is not None and genre != '(no genres listed)':
+#                 string += genre
+#                 string += '|'
+#         string = string[:-1]
+#         if string == '':
+#             continue
+#         arr.append(string)
+#         data.append(arr)
 
-    return data
+#     return data
 
 
 def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres']):
@@ -138,9 +138,31 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
     return {'subjects': subjects, 'count': len(list_data)}
 
 
-def movies_to_list(json_data):
+def json_to_list(json_data, header=['movieName', 'movieId', 'rating', 'genres']):
+    '''把请求的用户json转换为可以训练的list'''
+    if json_data == '' or json_data == None:
+        print('json_to_list error')
+        return None
+    data = []
+    for v in json_data['subjects']:
+        arr = []
+        for k in header:
+            arr.append(v[k])
+
+        # arr.append(v['movieName'])
+        # arr.append(int(v['movieId']))
+        # arr.append(float(v['rating']))
+        # arr.append(v['genres'])
+
+        data.append(arr)
+
+    return data
+
+
+def douban_movies_to_list(json_data):
     '''把豆瓣json转换为可以推荐的list格式'''
     if json_data == '' or json_data == None:
+        print('douban_movies_to_list error')        
         return None
     data = []
     # 这里处理单个电影数据
@@ -151,7 +173,7 @@ def movies_to_list(json_data):
 
         arr.append(v['title'])
         arr.append(int(v['id']))
-        arr.append(float(v['rating']['average']) / 2)
+        arr.append(float(v['rating']['average']))
 
         # genres
         string = ''
@@ -183,7 +205,7 @@ def movies_to_list(json_data):
         arr = []
         arr.append(v['title'])
         arr.append(int(v['id']))
-        arr.append(float(v['rating']['average']) / 2)
+        arr.append(float(v['rating']['average']))
 
         string = ''
         for genre in v['genres']:
@@ -226,6 +248,7 @@ def get_recommend_movies(rs, user_data, recommend_data, n=5):
     print('user_movies', user_movies)
     return rs.CosineSim(recommend_data, user_movies)
 
+
 def error_res(msg="error"):
     return jsonify({"count": 0, "message": msg})
 
@@ -237,13 +260,17 @@ def api():
         base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
-        print('json loads')
         data = json.loads(str(request.get_data(), 'utf-8'))
-        print('json loads end')
+        print('get_recommend_movies')
 
-        print('get_recommend_movies')        
-        movies = get_recommend_movies(model, data['user'], data['recommend'], n=10)
-        print('get_recommend_movies end')              
+        user_data = data['user']
+        recommend_data = data['recommend']
+
+        user_data = json_to_list(user_data)
+        recommend_data = json_to_list(recommend_data)
+        
+        movies = get_recommend_movies(model, user_data, recommend_data, n=10)
+        print('get_recommend_movies end')
         print('movies', movies)
         new_movies = []
 
@@ -257,18 +284,18 @@ def api():
             else:
                 douban_data = ''
 
-            new_movie = movies_to_list(douban_data)
+            new_movie = douban_movies_to_list(douban_data)
             if new_movie is not None:
                 new_movies.append(new_movie)
 
-        temp_json = list_to_json(new_movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
+        temp_json = list_to_json(new_movies, header=[
+                                 'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
         resp = make_response(jsonify(temp_json))
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
-        print(request.get_data())    
+        print(request.get_data())
         return error_res("api error")
- 
 
 
 # @app.route('/test', methods=['GET', 'POST'])
@@ -279,8 +306,9 @@ def api():
 @app.route('/test2', methods=['GET', 'POST'])
 def test2():
     '''测试用api，返回豆瓣的数据'''
-    movies = movies_to_list(requests.get(one_movie).json())
-    temp_json = list_to_json(movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
+    movies = douban_movies_to_list(requests.get(one_movie).json())
+    temp_json = list_to_json(
+        movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
     resp = make_response(jsonify(temp_json))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     # request.data 表示请求体
