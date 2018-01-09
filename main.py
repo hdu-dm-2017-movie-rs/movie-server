@@ -244,8 +244,8 @@ model = init_movie_rs()
 
 def get_recommend_movies(rs, user_data, recommend_data, n=5):
     '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
+    print('247')      
     user_movies = rs.predict(user_data, n)
-    print('user_movies', user_movies)
     return rs.CosineSim(recommend_data, user_movies)
 
 
@@ -264,11 +264,13 @@ def api():
         print('get_recommend_movies')
 
         user_data = data['user']
+        print('267')
         recommend_data = data['recommend']
-
+        print('269')
         user_list = json_to_list(user_data)
+        print('271')        
         recommend_list = json_to_list(recommend_data)
-
+        print('273')
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         print('get_recommend_movies end')
         print('movies', movies)
