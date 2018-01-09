@@ -162,7 +162,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rating', 'genres'])
 def douban_movies_to_list(json_data):
     '''把豆瓣json转换为可以推荐的list格式'''
     if json_data == '' or json_data == None:
-        print('douban_movies_to_list error')        
+        print('douban_movies_to_list error')
         return None
     data = []
     # 这里处理单个电影数据
@@ -266,10 +266,10 @@ def api():
         user_data = data['user']
         recommend_data = data['recommend']
 
-        user_data = json_to_list(user_data)
-        recommend_data = json_to_list(recommend_data)
-        
-        movies = get_recommend_movies(model, user_data, recommend_data, n=10)
+        user_list = json_to_list(user_data)
+        recommend_list = json_to_list(recommend_data)
+
+        movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         print('get_recommend_movies end')
         print('movies', movies)
         new_movies = []
@@ -295,6 +295,7 @@ def api():
         return resp
     except BaseException as err:
         print(request.get_data())
+        print(err)
         return error_res("api error")
 
 
