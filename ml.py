@@ -9,7 +9,7 @@ import time
 ratings = pd.read_csv('ml-latest/ratings.csv')
 ratings = ratings.drop(['timestamp'], axis=1)
 movies = pd.read_csv('ml-latest/movies.csv')
-ratings = ratings.sample(frac=0.1)
+ratings = ratings.sample(frac=0.002)
 
 # 构建训练集矩阵[电影数量，电影类型19]，使用预先载入数据集
 

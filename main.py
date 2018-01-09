@@ -201,15 +201,6 @@ def movies_to_list(json_data):
     return data
 
 
-def get_movie_data(urls):
-    '''封装了豆瓣api获取所需要的电影数据，返回适合推荐系统训练的二维list'''
-    # movies_data = []
-    # for url in urls:
-    #     json_data = requests.get(url).json()
-    #     list_to_json
-    return
-
-
 def init_movie_rs():
     '''初始化推荐系统，返回模型'''
     x_train, y_train = ml.reshape_train()
@@ -236,34 +227,20 @@ def api():
 
     # 推荐算法
     # java给的接口{"user": {...}, "recommend":{...}}
-    data = json.loads(request.data)
+    data = json.loads(str(request.data, 'utf-8'))
     movies = get_recommend_movies(model, data['user'], data['recommend'], n=10)
     new_movies = []
 
     # 向豆瓣请求获得更详细的数据
     for movie in movies:
-        new_movie = movies_to_list(requests.get(base_url + movie['movieId']).json())
+        new_movie = movies_to_list(requests.get(
+            base_url + movie['movieId']).json())
         new_movies.append(new_movie)
 
-    resp = make_response(json.dumps(list_to_json(new_movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
+    resp = make_response(json.dumps(list_to_json(new_movies, header=[
+                         'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
-
-# @app.route('/api', methods=['POST'])
-# def root():
-#     '''对外提供推荐系统api'''
-#     user_data = deepcopy(test_user_data)
-#     recommend_data = deepcopy(test_recommend_data)
-
-#     # 推荐
-#     rs = get_movie_rs(user_data)
-#     movies = get_recommend_data(rs, recommend_data, n=10)
-#     print(movies)
-
-#     resp = make_response(json.dumps(list_to_json(
-#         movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
-#     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-#     return resp
 
 
 @app.route('/test', methods=['GET', 'POST'])
@@ -289,18 +266,4 @@ def test2():
 
 
 if __name__ == '__main__':
-
     app.run('0.0.0.0', 5000)
-    # movies = movies_to_list(requests.get(one_movie).json())
-    # print(list_to_json(movies,  header=[
-    # 'movieName', 'movieId', 'rating', 'genres', 'img', 'summary']))
-    # user_data = deepcopy(test_user_data)
-    # recommend_data = deepcopy(test_recommend_data)
-
-    # 推荐
-    # rs = get_movie_rs(user_data)
-    # movies = get_recommend_data(rs, recommend_data, n=10)
-    # print(movies)
-
-    # data = json.dumps(list_to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary']))
-    pass
