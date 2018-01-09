@@ -162,8 +162,10 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                         string += genre
                         string += '|'
                 if string == '':
-                    continue
-                string = string[:-1]
+                    arr.append('')
+                else:
+                    string = string[:-1]
+                    arr.append(string)
                 
             print(k)
         # arr.append(v.get['movieName'])
@@ -262,7 +264,9 @@ model = init_movie_rs()
 def get_recommend_movies(rs, user_data, recommend_data, n=5):
     '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
     print('247')
+    #### bug!!!!!!!!!!!
     user_movies = rs.predict(user_data, n)
+    print('26222')
     return rs.CosineSim(recommend_data, user_movies)
 
 
@@ -302,7 +306,6 @@ def api():
         print(type(recommend_data))
         print()
         print()
-        print()
 
         user_list = json_to_list(
             user_data, header=['movieName', 'movieId', 'ranting', 'genres'])
@@ -310,6 +313,8 @@ def api():
         recommend_list = json_to_list(recommend_data, header=[
                                       'movieName', 'movieId', 'rank', 'genres'])
         print('273')
+        print('len', len(user_list))
+        print('len', len(recommend_list))
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         print('get_recommend_movies end')
         print('movies', movies)
