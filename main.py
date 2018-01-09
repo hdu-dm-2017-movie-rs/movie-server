@@ -140,6 +140,8 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
 
 def movies_to_list(json_data):
     '''把豆瓣json转换为可以推荐的list格式'''
+    if json_data == '' or json_data == None:
+        return None
     data = []
     # 这里处理单个电影数据
     if json_data.get('count') == None:
@@ -206,6 +208,7 @@ def init_movie_rs():
     x_train, y_train = ml.reshape_train()
     rs = ml.MovieRS()
     rs.fit(x_train, y_train)
+    print('训练完成')
     return rs
 
 
@@ -215,6 +218,7 @@ model = init_movie_rs()
 def get_recommend_movies(rs, user_data, recommend_data, n=5):
     '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
     user_movies = rs.predict(user_data, n)
+    print('推荐的电影', user_movies)
     return rs.CosineSim(recommend_data, user_movies)
 
 
@@ -229,13 +233,21 @@ def api():
     # java给的接口{"user": {...}, "recommend":{...}}
     data = json.loads(str(request.data, 'utf-8'))
     movies = get_recommend_movies(model, data['user'], data['recommend'], n=10)
+    print('movies', movies)
     new_movies = []
 
     # 向豆瓣请求获得更详细的数据
     for movie in movies:
-        new_movie = movies_to_list(requests.get(
-            base_url + movie['movieId']).json())
-        new_movies.append(new_movie)
+        
+        res = requests.get(base_url + str(movie['movieId']))
+        if res.ok:
+            douban_data = res.json()
+        else:
+            douban_data = ''
+
+        new_movie = movies_to_list(douban_data)
+        if new_movie is not None:
+            new_movies.append(new_movie)
 
     resp = make_response(json.dumps(list_to_json(new_movies, header=[
                          'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
