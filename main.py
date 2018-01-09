@@ -146,7 +146,7 @@ def movies_to_list(json_data):
     data = []
     # 这里处理单个电影数据
     if json_data.get('count') == None:
-        print('单条数据')
+        print('one movie')
         arr = []
         v = json_data
         arr.append(v['title'])
@@ -243,7 +243,7 @@ def api():
         for movie in movies:
 
             res = requests.get(base_url + str(movie['movieId']))
-            print('movieId:', movieId)
+            print('movieId:', movie['movieId'])
             if res.ok:
                 douban_data = res.json()
             else:
@@ -278,7 +278,7 @@ def test2():
     resp = make_response(jsonify(temp_json))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     # request.data 表示请求体
-    app.logger.error(request.data)
+    app.logger.error(request.get_data())
     print(request.data)
     return resp
 
