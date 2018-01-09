@@ -140,19 +140,20 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
 
 def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     '''把请求的用户json转换为可以训练的list'''
+    print('json to list')
     if json_data == '' or json_data == None:
         print('json_to_list error')
         return None
     data = []
     for v in json_data['subjects']:
         arr = []
-        for k in header:
-            arr.append(v[k])
+        # for k in header:
+            # arr.append(v[k])
 
-        # arr.append(v['movieName'])
-        # arr.append(int(v['movieId']))
-        # arr.append(float(v['rank']))
-        # arr.append(v['genres'])
+        arr.append(v['movieName'])
+        arr.append(int(v['movieId']))
+        arr.append(float(v['rank']) / 2)
+        arr.append(v['genres'])
 
         data.append(arr)
     print('json_to_list end')
