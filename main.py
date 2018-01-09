@@ -58,6 +58,7 @@ def to_list(json_data):
         arr.append(v['title'])
         arr.append(int(v['id']))
         arr.append(float(v['rating']['average']) / 2)
+        # arr.append(v['images']['large'])
         str = ''
         for genre in v['genres']:
             genre = transform(genre, 'en')
@@ -73,7 +74,7 @@ def to_list(json_data):
     return data
 
 
-def to_json(list_data, header=['movieName', 'movieId', 'rank', 'genres']):
+def to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary']):
     '''把二维list电影数据转换为json，对外提供接口'''
     try:
         # list_data = data
@@ -90,11 +91,13 @@ def to_json(list_data, header=['movieName', 'movieId', 'rank', 'genres']):
     return {'subjects': subjects, 'count': len(list_data)}
 
 
-def get_movie_data(url):
+def get_movie_data(urls):
     '''封装了豆瓣api获取所需要的电影数据，返回适合推荐系统训练的二维list'''
-    json_data = requests.get(url).json()
-    data_list = to_list(json_data)
-    return data_list
+    # movies_data = []    
+    # for url in urls:
+    #     json_data = requests.get(url).json()
+    #     to_json
+    return 
 
 
 def get_movie_rs(user_data):
@@ -112,7 +115,9 @@ def get_recommend_data(rs, recommend, n=10):
     reshape = ml.Reshape()
     x_test, y_test = reshape.user_matrix(recommend)
     movies = rs.predict(x_test, recommend, n)
-    # print('y_test', y_test)
+
+    # 查找movies相关的电影数据
+
     return movies
 
 
@@ -148,16 +153,16 @@ test_recommend_data = [['1', '26662193', '3.1', 'Comedy'],
                        ['15', '26761416', '4.3', 'Drama']]
 
 test_recommend_data = [
-    ['大世界', 26954003, 3.75, 'Animation'],
-    ['无问西东', 6874741, 0.0, 'Drama|Romance|War'],
-    ['迷镇凶案', 2133433, 3.15, 'Comedy|Crime|Mystery'],
-    ['大寒', 26392877, 0.0, 'Drama|War'],
-    ['无法触碰的爱', 27621048, 0.0, 'Drama|Romance'],
-    ['青蛙总动员', 26752895, 1.7, 'Comedy|Animation'],
-    ['芒刺', 27601920, 0.0, 'Drama'],
-    ['第一夫人', 4849728, 3.3, 'Drama'],
-    ['神秘巨星', 26942674, 4.15, 'Drama|Musical'],
-    ['公牛历险记', 25846857, 3.75, 'Comedy|Animation|Adventure']
+    ['大世界', 26954003, 3.75, 'Animation', 'http://www.baidu.com', '简介测试'],
+    ['无问西东', 6874741, 0.0, 'Drama|Romance|War', 'http://www.baidu.com', '简介测试'],
+    ['迷镇凶案', 2133433, 3.15, 'Comedy|Crime|Mystery', 'http://www.baidu.com', '简介测试'],
+    ['大寒', 26392877, 0.0, 'Drama|War', 'http://www.baidu.com', '简介测试'],
+    ['无法触碰的爱', 27621048, 0.0, 'Drama|Romance', 'http://www.baidu.com', '简介测试'],
+    ['青蛙总动员', 26752895, 1.7, 'Comedy|Animation', 'http://www.baidu.com', '简介测试'],
+    ['芒刺', 27601920, 0.0, 'Drama', 'http://www.baidu.com', '简介测试'],
+    ['第一夫人', 4849728, 3.3, 'Drama', 'http://www.baidu.com', '简介测试'],
+    ['神秘巨星', 26942674, 4.15, 'Drama|Musical', 'http://www.baidu.com', '简介测试'],
+    ['公牛历险记', 25846857, 3.75, 'Comedy|Animation|Adventure', 'http://www.baidu.com', '简介测试']
 ]
 
 
@@ -172,18 +177,29 @@ def root():
     rs = get_movie_rs(user_data)
     movies = get_recommend_data(rs, recommend_data, n=10)
     print(movies)
-    resp = make_response(json.dumps(to_json(movies)))
+
+    resp = make_response(json.dumps(to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
 
-@app.route('/test', methods=['POST'])
+@app.route('/test', methods=['GET', 'POST'])
 def test():
     '''测试用api，返回静态数据'''
-    resp = make_response(json.dumps(to_json(test_recommend_data)))
+    resp = make_response(json.dumps(to_json(test_recommend_data, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 5000)
+    # user_data = deepcopy(test_user_data)
+    # recommend_data = deepcopy(test_recommend_data)
+
+    # 推荐
+    # rs = get_movie_rs(user_data)
+    # movies = get_recommend_data(rs, recommend_data, n=10)
+    # print(movies)
+
+    # data = json.dumps(to_json(movies, header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary']))
+    pass

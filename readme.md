@@ -4,7 +4,7 @@
 
 返回电影基本数据，全局有一个count属性，如果为0则表示错误或者无数据。
 
-- `POST` ip:port/ 正式接口
+- `POST` ip:port/api 正式接口
 
 - `POST` ip:port/test 测试用接口，总是返回静态数据提供调试
 
@@ -13,10 +13,12 @@
 ```json
 {"count": 1,
  "subjects": [
-     {"genres": "大世界",
-   "movieId": "Animation",
-   "movieName": 26954003,
-   "rank": 3.75}
+     {"genres": "Animation",
+   "movieId": 26954003: ,
+   "movieName": "大世界",
+   "rating": 3.75,
+   "img": "someurl",
+   "summary": "电影简介"}
    ]
 }
 ```
