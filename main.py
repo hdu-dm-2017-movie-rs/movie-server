@@ -151,7 +151,8 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     for v in json_data['subjects']:
         arr = []
         for k in header:
-            arr.append(v.get[k])
+            arr.append(v.get(k))
+            print(v.get(k))
         # arr.append(v.get['movieName'])
         # arr.append(int(v.get['movieId']))
         # arr.append(float(v.get['rank']) / 2)
