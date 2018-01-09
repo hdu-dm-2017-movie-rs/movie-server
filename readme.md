@@ -6,7 +6,7 @@
 
 - `POST` ip:port/api 正式接口
 
-- `POST` ip:port/test 测试用接口，总是返回静态数据提供调试
+- `POST` ip:port/test2 测试用接口，总是返回静态数据提供调试
 
 返回数据样例，之后会补充更多电影的属性
 
