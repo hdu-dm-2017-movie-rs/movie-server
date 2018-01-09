@@ -261,6 +261,7 @@ def api():
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
+        print(request.get_data())    
         return error_res("api error")
  
 
