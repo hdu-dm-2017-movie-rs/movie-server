@@ -279,7 +279,7 @@ def api():
         print()
         print()
         print(recommend_data)
-        print(type(recommend_data)))
+        print(type(recommend_data))
         print()
         print()
         print()
