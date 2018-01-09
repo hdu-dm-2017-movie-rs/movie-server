@@ -138,7 +138,7 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
     return {'subjects': subjects, 'count': len(list_data)}
 
 
-def json_to_list(json_data, header=['movieName', 'movieId', 'rating', 'genres']):
+def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     '''把请求的用户json转换为可以训练的list'''
     if json_data == '' or json_data == None:
         print('json_to_list error')
@@ -151,7 +151,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rating', 'genres'])
 
         # arr.append(v['movieName'])
         # arr.append(int(v['movieId']))
-        # arr.append(float(v['rating']))
+        # arr.append(float(v['rank']))
         # arr.append(v['genres'])
 
         data.append(arr)
@@ -294,8 +294,9 @@ def api():
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
-        print(request.get_data())
+        # print(request.get_data())
         print(err)
+        print(err.args)
         return error_res("api error")
 
 
