@@ -208,7 +208,7 @@ def init_movie_rs():
     x_train, y_train = ml.reshape_train()
     rs = ml.MovieRS()
     rs.fit(x_train, y_train)
-    print('训练完成')
+    print('train finished')
     return rs
 
 
@@ -218,7 +218,7 @@ model = init_movie_rs()
 def get_recommend_movies(rs, user_data, recommend_data, n=5):
     '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
     user_movies = rs.predict(user_data, n)
-    print('推荐的电影', user_movies)
+    print('user_movies', user_movies)
     return rs.CosineSim(recommend_data, user_movies)
 
 
