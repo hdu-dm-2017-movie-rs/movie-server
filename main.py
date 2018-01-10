@@ -150,9 +150,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     data = []
     for v in json_data['subjects']:
         arr = []
-        print('len', len(v))
         for k in header:
-            print(k)            
             if k == 'movieName':
                 arr.append('test for movieName')            
                 continue
@@ -179,6 +177,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         # arr.append(v.get['genres'])
 
         data.append(arr)
+        print(arr)
     print('json_to_list end')
     return data
 
@@ -341,7 +340,7 @@ def api():
 
         temp_json = list_to_json(new_movies, header=[
                                  'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
-        resp = make_response(jsonify(temp_json).encoding('utf8'))
+        resp = make_response(jsonify(temp_json))
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         return resp
     except BaseException as err:
@@ -361,7 +360,7 @@ def test2():
     movies = douban_movies_to_list(requests.get(one_movie).json())
     temp_json = list_to_json(
         movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
-    resp = make_response(jsonify(temp_json).encoding('utf8'))
+    resp = make_response(jsonify(temp_json))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     # request.data 表示请求体
     print(request.get_data())
