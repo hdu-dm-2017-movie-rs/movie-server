@@ -1,4 +1,3 @@
-# encoding=utf8
 import json
 import sys
 from flask import Flask
@@ -126,16 +125,18 @@ def transform(genre, lang='cn'):
 
 def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres']):
     '''把二维list电影数据转换为json dict，对外提供接口'''
+    print('list to json')
     subjects = []
     try:
         for item in list_data:
             obj = {}
             for i in range(len(item)):
-                print(item[i])
+                print('item', item[i])
                 obj[header[i]] = item[i]
             subjects.append(obj)
 
     except BaseException as err:
+        print('list to json error')
         return {'count': 0, 'error': err.args[0]}
 
     return {'subjects': subjects, 'count': len(list_data)}
@@ -223,7 +224,6 @@ def douban_movies_to_list(json_data):
             arr.append(summary)
 
         data.append(arr)
-        print('douban_movies to list end')    
         return data
 
     print(json_data.get('count'))
@@ -288,7 +288,7 @@ def api():
         base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
-        print('api')
+        # print('api')
         data = request.get_json()        
         print(type(data))
         data = json.loads(str(request.get_data(), 'utf-8'), encoding='utf-8')
@@ -329,10 +329,9 @@ def api():
         # print()
         resp = make_response(jsonify(temp_json))
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-        print('api success')        
+        print('api success')
         return resp
     except BaseException as err:
-        # print(request.get_data())
         print('err', err)
         return error_res("api error")
 
