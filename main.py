@@ -131,13 +131,12 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
         for item in list_data:
             obj = {}
             for i in range(len(item)):
-                print('item', item[i])
                 obj[header[i]] = item[i]
             subjects.append(obj)
-
+            print(subjects)
     except BaseException as err:
         print('list to json error')
-        return {'count': 0, 'error': err.args[0]}
+        return {'count': 0, 'error': err.args}
 
     return {'subjects': subjects, 'count': len(list_data)}
 
