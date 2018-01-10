@@ -132,9 +132,11 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
             obj = {}
             for i in range(len(item)):
                 obj[header[i]] = item[i]
+                print('item[i]', item[i])
             subjects.append(obj)
+            print(obj)
             # \u9ed1\ufa0 1295746
-            print(subjects)
+            # print(subjects)
     except BaseException as err:
         print('list to json error')
         return {'count': 0, 'error': err.args}
@@ -311,8 +313,8 @@ def api():
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         new_movies = []
 
-        if len(movies) > 10:
-            movies = movies[:10]
+        if len(movies) > 3:
+            movies = movies[:3]
             
         print('douban')
         # 向豆瓣请求获得更详细的数据
@@ -323,6 +325,7 @@ def api():
             if res.ok:
                 douban_data = res.json()
                 new_movie = douban_movies_to_list(douban_data)
+                # test ok
             else:
                 print('douban fail')
                 new_movie = None
