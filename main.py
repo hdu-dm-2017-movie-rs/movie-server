@@ -284,7 +284,8 @@ def api():
         base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
-        data = json.loads(str(request.get_data(), 'utf-8'))
+        # data = json.loads(str(request.get_data(), 'utf-8'))
+        data = request.get_json()
         user_data = data.get('user')
         recommend_data = data.get('recommend')
         user_list = json_to_list(
