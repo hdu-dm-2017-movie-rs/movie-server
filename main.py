@@ -142,7 +142,6 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
 
 def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     '''把请求的用户json转换为可以训练的list'''
-    print('json to list')
     if json_data == '' or json_data == None:
         print('json_to_list error')
         return None
@@ -162,6 +161,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 for genre in v.get('genres'):
                     # 中文转英文
                     genre = transform(genre, 'en')
+                    print(genres)
                     if genre is not None and genre != '(no genres listed)':
                         string += genre
                         string += '|'
@@ -177,7 +177,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         # arr.append(v.get['genres'])
 
         data.append(arr)
-        print(arr)
+        # print(arr)
     print('json_to_list end')
     return data
 
@@ -363,7 +363,7 @@ def test2():
     resp = make_response(jsonify(temp_json))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     # request.data 表示请求体
-    print(request.get_data())
+    # print(request.get_data())
     return resp
 
 
