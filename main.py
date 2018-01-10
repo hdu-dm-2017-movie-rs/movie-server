@@ -128,6 +128,7 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
     print('list to json')
     subjects = []
     try:
+        # bug!!! list_data 应该为2维
         print(list_data)
         for item in list_data:
             obj = {}
@@ -321,13 +322,12 @@ def api():
         print('douban')
         # 向豆瓣请求获得更详细的数据
         for movie in movies:
-
             res = requests.get(base_url + str(movie[1]))
             print('movieId:', movie[1])
             if res.ok:
                 douban_data = res.json()
                 new_movie = douban_movies_to_list(douban_data)
-                # test ok
+                print('shape', np.array(new_movie).shape)
             else:
                 print('douban fail')
                 new_movie = None
@@ -336,7 +336,7 @@ def api():
                 new_movies.append(new_movie)
 
         # 新数据拿到后处理完返回给请求
-        print(new_movie)
+        # print(new_movie)
         temp_json = list_to_json(new_movies, header=[
                                  'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
         # print()
