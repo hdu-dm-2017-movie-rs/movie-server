@@ -172,18 +172,18 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 else:
                     string = string[:-1]
                     arr.append(string)
-                    print(string)
+                    # print(string)
                 
         # arr.append(v.get['movieName'])
         # arr.append(int(v.get['movieId']))
         # arr.append(float(v.get['rank']) / 2)
         # arr.append(v.get['genres'])
-        
+
         # 无类型电影不需要
         if arr[3] == '':
             continue
         data.append(arr)
-        # print(arr)
+        print(arr)
     print('json_to_list end')
     return data
 
