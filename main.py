@@ -161,7 +161,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 for genre in v.get('genres'):
                     # 中文转英文
                     genre = transform(genre, 'en')
-                    print(genres)
+                    print(genre)
                     if genre is not None and genre != '(no genres listed)':
                         string += genre
                         string += '|'
