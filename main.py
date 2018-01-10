@@ -143,9 +143,7 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
 def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     '''把请求的json转换为可以训练的list'''
     if json_data == '' or json_data == None:
-        print('json_to_list error')
         return None
-    print('149')
     data = []
     for v in json_data['subjects']:
         arr = []
@@ -157,9 +155,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
             if k != 'genres':
                 arr.append(str(v.get(k)))
 
-            if k == 'rank' or k == 'rating' and v.get(k) is not None:
-                print(type(v.get(k)))
-                print(float(v.get(k)))
             # 中文转英文
             if k == 'genres':
                 string = ''
@@ -168,7 +163,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 for genre in cn_genres:
                     # 中文转英文
                     genre = transform(genre, 'en')
-                    # print(genre)
                     if genre is not None and genre != '(no genres listed)':
                         string += genre
                         string += '|'
@@ -177,7 +171,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 else:
                     string = string[:-1]
                     arr.append(string)
-                    # print(string)
                 
         # arr.append(v.get['movieName'])
         # arr.append(int(v.get['movieId']))
@@ -188,8 +181,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         if arr[3] == '':
             continue
         data.append(arr)
-        print(arr)
-    print('json_to_list end')
     return data
 
 
@@ -201,7 +192,6 @@ def douban_movies_to_list(json_data):
     data = []
     # 这里处理单个电影数据
     if json_data.get('count') == None:
-        print('one movie')
         arr = []
         v = json_data
 
@@ -278,10 +268,8 @@ model = init_movie_rs()
 
 def get_recommend_movies(rs, user_data, recommend_data, n=5):
     '''根据模型，用户历史数据，候选电影数据和个数，返回相应的推荐电影数据'''
-    print('247')
     #### bug!!!!!!!!!!!
     user_movies = rs.predict(user_data, n)
-    print('26222')
     return rs.CosineSim(recommend_data, user_movies)
 
 
@@ -296,47 +284,19 @@ def api():
         base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
-        print('266')
         data = json.loads(str(request.get_data(), 'utf-8'))
-        print(type(data))
-        print(type(data.get('user')))
-        print(type(data.get('recommend')))
-        print()
-        print()
-        # print(data)
-        print(type(data))
-        print()
-        print()
-        print()
         user_data = data.get('user')
         recommend_data = data.get('recommend')
-        # print('269')
-
-        # print(user_data)
-        # print(type(user_data))
-        # print()
-        # print()
-        # print()
-        # print(recommend_data)
-        # print(type(recommend_data))
-        # print()
-        # print()
-
         user_list = json_to_list(
             user_data, header=['movieName', 'movieId', 'rating', 'genres'])
-        print('271')
+        # print('271')
         recommend_list = json_to_list(recommend_data, header=[
                                       'movieName', 'movieId', 'rank', 'genres'])
-        # print('273')
-        print('len', len(user_list))
-        print('len', len(recommend_list))
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
-        print('get_recommend_movies end')
         new_movies = []
 
         if len(movies) > 10:
             movies = movies[:10]
-        print('movies', movies)
             
         # 向豆瓣请求获得更详细的数据
         for movie in movies:
