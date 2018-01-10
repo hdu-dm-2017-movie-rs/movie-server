@@ -307,6 +307,7 @@ def api():
         # print(type(data))
         data = json.loads(str(request.get_data(), 'utf-8'), encoding='utf-8')
         if data == None:
+            print("api error")
             raise BaseException('request json data error')
         user_data = data.get('user')
         recommend_data = data.get('recommend')
@@ -348,6 +349,7 @@ def api():
         print('api success')
         return resp
     except BaseException as err:
+        print('api fail')
         print('err', err)
         return error_res("api error")
 
@@ -363,12 +365,12 @@ def test():
 def test2():
     '''测试用api，返回豆瓣的数据'''
     movies = douban_movies_to_list(requests.get(one_movie).json())
+    print('movies', one_movie)
     temp_json = list_to_json(
         movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
     resp = make_response(jsonify(temp_json))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-    # request.data 表示请求体
-    # print(request.get_data())
+    print('test2 success')
     return resp
 
 
