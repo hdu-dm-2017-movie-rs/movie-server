@@ -158,7 +158,9 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
             # 中文转英文
             if k == 'genres':
                 string = ''
-                for genre in v.get('genres'):
+                cn_genres = v.get('genres')
+                cn_genres = cn_genres.split('|')
+                for genre in cn_genres:
                     # 中文转英文
                     genre = transform(genre, 'en')
                     print(genre)
