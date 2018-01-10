@@ -192,7 +192,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
 
 
 def douban_movies_to_list(json_data):
-    '''把豆瓣json转换为可以推荐的list格式'''
+    '''把豆瓣json转换为可以推荐的list格式，总是返回二维list'''
     print('douban_movies to list')
     if json_data == '' or json_data == None:
         print('douban_movies_to_list error')
@@ -327,13 +327,14 @@ def api():
             if res.ok:
                 douban_data = res.json()
                 new_movie = douban_movies_to_list(douban_data)
-                print('shape', np.array(new_movie).shape)
+                # print('shape', np.array(new_movie).shape)
             else:
                 print('douban fail')
                 new_movie = None
             
             if new_movie is not None:
-                new_movies.append(new_movie)
+                # 总是只有一个电影数据
+                new_movies.append(new_movie[0])
 
         # 新数据拿到后处理完返回给请求
         # print(new_movie)
