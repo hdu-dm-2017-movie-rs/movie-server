@@ -16,4 +16,9 @@ def load(url):
 
 if __name__ == "__main__":
     data = load('./data.json')
-    print(json.dumps(data, ensure_ascii=False))
+    # json_data = json.dumps(data).encode('utf-8')
+    json_data = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    
+    res = requests.post('http://115.159.125.83:5000/api', data=json_data)
+    print(res.ok)
+    print(res.text)

@@ -32,3 +32,17 @@
 * mysql.py 还没有使用上
 
 [算法接口](ml_func.md)
+
+
+## 其他
+
+请下载依赖的包和数据
+
+```bash
+python main.py
+```
+or 
+
+```bash
+python3 main.py
+```
