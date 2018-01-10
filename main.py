@@ -128,8 +128,10 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
     print('list to json')
     subjects = []
     try:
+        print(list_data)
         for item in list_data:
             obj = {}
+            print('item', item)
             for i in range(len(item)):
                 obj[header[i]] = item[i]
                 print('item[i]', item[i])
