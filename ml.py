@@ -10,7 +10,7 @@ import time
 ratings = pd.read_csv('ml-latest/ratings.csv')
 ratings = ratings.drop(['timestamp'], axis=1)
 movies = pd.read_csv('ml-latest/movies.csv')
-ratings = ratings.sample(frac=0.5)
+ratings = ratings.sample(frac=0.1)
 
 # 构建训练集矩阵[电影数量，电影类型19]，使用预先载入数据集
 
@@ -96,7 +96,7 @@ class MovieRS():
         return rs_id
 
     # 计算与要推荐的电影之间的余弦相似度
-    def CosineSim(self, x, y, rate=0.5):
+    def CosineSim(self, x, y, rate=0.6):
         self.X = x
         self.Y = y
         M1 = user_matrix(self.X)

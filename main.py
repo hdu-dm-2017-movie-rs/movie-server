@@ -329,8 +329,8 @@ def api():
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         new_movies = []
 
-        if len(movies) > 3:
-            movies = movies[:3]
+        if len(movies) > 5:
+            movies = movies[:5]
             
         # print('douban')
         # 向豆瓣请求获得更详细的数据
