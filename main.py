@@ -346,7 +346,7 @@ def api():
         temp_json = list_to_json(new_movies, header=[
                                  'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
         # print()
-        resp = make_response(jsonify(temp_json))
+        resp = make_response(json.dumps(temp_json, ensure_ascii=False))
         resp.headers['Content-Type'] = 'application/json; charset=utf-8'
         print('api success')
         return resp

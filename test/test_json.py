@@ -1,5 +1,6 @@
 import json
 import time
+import requests
 
 
 def store(data):
@@ -8,11 +9,11 @@ def store(data):
 
 
 def load(url):
-    with open(url, 'r') as json_file:
+    with open(url, 'r', encoding='utf-8') as json_file:
         data = json.load(json_file)
         return data
 
 
 if __name__ == "__main__":
-    data = load('./test.json')
-    print(data)
+    data = load('./data.json')
+    print(json.dumps(data, ensure_ascii=False))
