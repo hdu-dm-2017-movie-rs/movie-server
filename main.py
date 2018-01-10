@@ -147,7 +147,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         return None
     print('149')
     data = []
-    count = 0
     for v in json_data['subjects']:
         arr = []
         for k in header:
@@ -159,7 +158,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 arr.append(str(v.get(k)))
 
             if k == 'rank' and v.get(k) is not None:
-                count += 1
                 print(type(v.get(k)))
                 print(float(v.get(k)))
             # 中文转英文
@@ -192,7 +190,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
         data.append(arr)
         print(arr)
     print('json_to_list end')
-    print('count', count)
     return data
 
 
@@ -326,7 +323,7 @@ def api():
         print()
 
         user_list = json_to_list(
-            user_data, header=['movieName', 'movieId', 'ranting', 'genres'])
+            user_data, header=['movieName', 'movieId', 'rating', 'genres'])
         print('271')
         recommend_list = json_to_list(recommend_data, header=[
                                       'movieName', 'movieId', 'rank', 'genres'])
