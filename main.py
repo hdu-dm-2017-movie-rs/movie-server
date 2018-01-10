@@ -303,7 +303,7 @@ def api():
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
         print(1)
-        data = request.get_json()
+        # data = request.get_json()
         print(2)
         data = request.data       
         print(3)
