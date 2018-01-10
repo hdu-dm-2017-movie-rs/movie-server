@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import sys
 from flask import Flask
@@ -299,90 +300,19 @@ def error_res(msg="error"):
 @app.route('/api', methods=['GET', 'POST'])
 def api():
     '''对外提供推荐系统api'''
-    try:
-        base_url = 'http://api.douban.com/v2/movie/subject/'
+    base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
-        print(request.headers)
-        print(type(request.get_json()))
-        # print(request.get_json())
-        # data = json.loads(str(request.get_json(), 'utf-8'), encoding='utf-8')
-        data = json.loads(request.get_json())
-        print(type(data))
-        # print(request.get_data()[:100])
-        # print(request.get_data()[-100:])
-        print(4)
-        
-        if data == None:
-            print("api error")
-            raise BaseException('request json data error')
-        user_data = data.get('user')
-        print(4)
-        recommend_data = data.get('recommend')
-        print(5)        
-        user_list = json_to_list(
-            user_data, header=['movieName', 'movieId', 'rating', 'genres'])
-        print('6')
-        recommend_list = json_to_list(recommend_data, header=[
-                                      'movieName', 'movieId', 'rank', 'genres'])
-        print('7')                                      
-        movies = get_recommend_movies(model, user_list, recommend_list, n=10)
-        new_movies = []
+    print(request.headers)
+    print(type(request.get_json()))
+    print(request.get_json())
 
-        if len(movies) > 3:
-            movies = movies[:3]
-            
-        # print('douban')
-        # 向豆瓣请求获得更详细的数据
-        for movie in movies:
-            res = requests.get(base_url + str(movie[1]))
-            # print('movieId:', movie[1])
-            if res.ok:
-                douban_data = res.json()
-                new_movie = douban_movies_to_list(douban_data)
-                # print('shape', np.array(new_movie).shape)
-            else:
-                print('douban fail')
-                new_movie = None
-            
-            if new_movie is not None:
-                # 总是只有一个电影数据
-                new_movies.append(new_movie[0])
-
-        # 新数据拿到后处理完返回给请求
-        print(new_movie)
-        temp_json = list_to_json(new_movies, header=[
-                                 'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
-        # print()
-        resp = make_response(json.dumps(temp_json, ensure_ascii=False))
-        resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-        print('api success')
-        return resp
-    except BaseException as err:
-        print('api fail')
-        print('err', err)
-        return error_res("api error错误")
-
-
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    '''测试用api，返回静态数据'''
-    # data = request.get_json()
-    print(type(data))    
-    return data['name']
-
-@app.route('/test2', methods=['GET', 'POST'])
-def test2():
-    '''测试用api，返回豆瓣的数据'''
-    print(request.data)
-    movies = douban_movies_to_list(requests.get(one_movie).json())
-    print('movies', one_movie)
-    temp_json = list_to_json(
-        movies,  header=['movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
-    resp = make_response(jsonify(temp_json))
+    resp = make_response('{"count":0}')
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-    print('test2 success')
     return resp
+
+
+
 
 
 if __name__ == '__main__':
