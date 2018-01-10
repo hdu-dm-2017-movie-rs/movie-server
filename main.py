@@ -310,36 +310,39 @@ def api():
         print()
         user_data = data.get('user')
         recommend_data = data.get('recommend')
-        print('269')
+        # print('269')
 
         # print(user_data)
-        print(type(user_data))
-        print()
-        print()
-        print()
+        # print(type(user_data))
+        # print()
+        # print()
+        # print()
         # print(recommend_data)
-        print(type(recommend_data))
-        print()
-        print()
+        # print(type(recommend_data))
+        # print()
+        # print()
 
         user_list = json_to_list(
             user_data, header=['movieName', 'movieId', 'rating', 'genres'])
         print('271')
         recommend_list = json_to_list(recommend_data, header=[
                                       'movieName', 'movieId', 'rank', 'genres'])
-        print('273')
+        # print('273')
         print('len', len(user_list))
         print('len', len(recommend_list))
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         print('get_recommend_movies end')
-        print('movies', movies)
         new_movies = []
 
+        if len(movies) > 10:
+            movies = movies[:10]
+        print('movies', movies)
+            
         # 向豆瓣请求获得更详细的数据
         for movie in movies:
 
-            res = requests.get(base_url + str(movie['movieId']))
-            print('movieId:', movie['movieId'])
+            res = requests.get(base_url + str(movie[1]))
+            print('movieId:', movie[1])
             if res.ok:
                 douban_data = res.json()
             else:

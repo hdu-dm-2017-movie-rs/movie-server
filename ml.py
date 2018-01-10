@@ -96,7 +96,7 @@ class MovieRS():
         return rs_id
 
     # 计算与要推荐的电影之间的余弦相似度
-    def CosineSim(self, x, y, rate=0.4):
+    def CosineSim(self, x, y, rate=0.5):
         self.X = x
         self.Y = y
         M1 = user_matrix(self.X)
