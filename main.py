@@ -141,7 +141,7 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
 
 
 def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
-    '''把请求的用户json转换为可以训练的list'''
+    '''把请求的json转换为可以训练的list'''
     if json_data == '' or json_data == None:
         print('json_to_list error')
         return None
@@ -157,7 +157,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
             if k != 'genres':
                 arr.append(str(v.get(k)))
 
-            if k == 'rank' and v.get(k) is not None:
+            if k == 'rank' or k == 'rating' and v.get(k) is not None:
                 print(type(v.get(k)))
                 print(float(v.get(k)))
             # 中文转英文
