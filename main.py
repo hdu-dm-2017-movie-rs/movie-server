@@ -129,15 +129,15 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
     subjects = []
     try:
         # bug!!! list_data 应该为2维
-        print(list_data)
+        # print(list_data)
         for item in list_data:
             obj = {}
-            print('item', item)
+            # print('item', item)
             for i in range(len(item)):
                 obj[header[i]] = item[i]
-                print('item[i]', item[i])
+                # print('item[i]', item[i])
             subjects.append(obj)
-            print(obj)
+            # print(obj)
             # \u9ed1\ufa0 1295746
             # print(subjects)
     except BaseException as err:
@@ -240,7 +240,7 @@ def douban_movies_to_list(json_data):
         data.append(arr)
         return data
 
-    print(json_data.get('count'))
+    # print(json_data.get('count'))
 
     # 这里处理多个电影数据
     for v in json_data['subjects']:
