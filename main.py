@@ -150,8 +150,14 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     data = []
     for v in json_data['subjects']:
         arr = []
+        print('len', len(v))
         for k in header:
+            print(k)            
+            if k == 'movieName':
+                arr.append('test for movieName')            
+                continue
             arr.append(v.get(k))
+                            
             # 中文转英文
             if k == 'genres':
                 string = ''
@@ -167,7 +173,6 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                     string = string[:-1]
                     arr.append(string)
                 
-            print(k)
         # arr.append(v.get['movieName'])
         # arr.append(int(v.get['movieId']))
         # arr.append(float(v.get['rank']) / 2)
