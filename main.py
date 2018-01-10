@@ -284,8 +284,10 @@ def api():
         base_url = 'http://api.douban.com/v2/movie/subject/'
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
-        # data = json.loads(str(request.get_data(), 'utf-8'))
-        data = request.get_json()
+        data = json.loads(str(request.get_data(), 'utf-8'))
+        # data = request.get_json()
+        if data == None:
+            raise BaseException('request json data error')
         user_data = data.get('user')
         recommend_data = data.get('recommend')
         user_list = json_to_list(
@@ -324,10 +326,12 @@ def api():
         return error_res("api error")
 
 
-# @app.route('/test', methods=['GET', 'POST'])
-# def test():
-#     '''测试用api，返回静态数据'''
-#     return "test"
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    '''测试用api，返回静态数据'''
+    data = request.get_json()
+    print(type(data))    
+    return data['name']
 
 @app.route('/test2', methods=['GET', 'POST'])
 def test2():
