@@ -150,10 +150,12 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     for v in json_data['subjects']:
         arr = []
         for k in header:
+            # 测试用
             if k == 'movieName':
                 arr.append('test for movieName')            
                 continue
-            arr.append(v.get(k))
+            if k != 'genres':
+                arr.append(str(v.get(k)))
                             
             # 中文转英文
             if k == 'genres':
