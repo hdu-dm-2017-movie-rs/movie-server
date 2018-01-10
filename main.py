@@ -133,6 +133,7 @@ def list_to_json(list_data, header=['movieName', 'movieId', 'rating', 'genres'])
             for i in range(len(item)):
                 obj[header[i]] = item[i]
             subjects.append(obj)
+            # \u9ed1\ufa0 1295746
             print(subjects)
     except BaseException as err:
         print('list to json error')
@@ -198,10 +199,14 @@ def douban_movies_to_list(json_data):
         arr = []
         v = json_data
 
-        arr.append(v['title'])
-        arr.append(int(v['id']))
-        arr.append(float(v['rating']['average']))
+        # arr.append(v.get('title'))
+        # arr.append(int(v['id']))
+        # arr.append(float(v['rating']['average']))
 
+        # for test
+        arr.append('title')
+        arr.append('id')
+        arr.append(10)
         # genres
         string = ''
         for genre in v['genres']:
@@ -212,11 +217,14 @@ def douban_movies_to_list(json_data):
         string = string[:-1]
         if string == '':
             return []
+        # test
+        string = 'genres'
         arr.append(string)
         # img
         arr.append(v['images']['large'])
         # summary
         summary = v.get('summary')
+        summary = 'summary'
         if summary is None:
             arr.append('')
         else:
@@ -323,6 +331,7 @@ def api():
                 new_movies.append(new_movie)
 
         # 新数据拿到后处理完返回给请求
+        print(new_movie)
         temp_json = list_to_json(new_movies, header=[
                                  'movieName', 'movieId', 'rating', 'genres', 'img', 'summary'])
         # print()
