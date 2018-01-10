@@ -204,14 +204,15 @@ def douban_movies_to_list(json_data):
         arr = []
         v = json_data
 
-        # arr.append(v.get('title'))
-        # arr.append(int(v['id']))
-        # arr.append(float(v['rating']['average']))
+        arr.append(v.get('title'))
+        arr.append(int(v['id']))
+        arr.append(float(v['rating']['average']))
 
         # for test
-        arr.append('title')
-        arr.append('id')
-        arr.append(10)
+        # arr.append('title')
+        # arr.append('id')
+        # arr.append(10)
+
         # genres
         string = ''
         for genre in v['genres']:
@@ -223,13 +224,14 @@ def douban_movies_to_list(json_data):
         if string == '':
             return []
         # test
-        string = 'genres'
+        # string = 'genres'
         arr.append(string)
         # img
         arr.append(v['images']['large'])
         # summary
         summary = v.get('summary')
-        summary = 'summary'
+        # for test
+        # summary = 'summary'
         if summary is None:
             arr.append('')
         else:
@@ -302,7 +304,7 @@ def api():
         # java给的接口{"user": {...}, "recommend":{...}}
         # print('api')
         data = request.get_json()        
-        print(type(data))
+        # print(type(data))
         data = json.loads(str(request.get_data(), 'utf-8'), encoding='utf-8')
         if data == None:
             raise BaseException('request json data error')
@@ -310,7 +312,7 @@ def api():
         recommend_data = data.get('recommend')
         user_list = json_to_list(
             user_data, header=['movieName', 'movieId', 'rating', 'genres'])
-        print('271')
+        # print('271')
         recommend_list = json_to_list(recommend_data, header=[
                                       'movieName', 'movieId', 'rank', 'genres'])
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
@@ -319,11 +321,11 @@ def api():
         if len(movies) > 3:
             movies = movies[:3]
             
-        print('douban')
+        # print('douban')
         # 向豆瓣请求获得更详细的数据
         for movie in movies:
             res = requests.get(base_url + str(movie[1]))
-            print('movieId:', movie[1])
+            # print('movieId:', movie[1])
             if res.ok:
                 douban_data = res.json()
                 new_movie = douban_movies_to_list(douban_data)
