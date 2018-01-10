@@ -303,11 +303,11 @@ def api():
         # 推荐算法
         # java给的接口{"user": {...}, "recommend":{...}}
         print(1)
-        # data = request.get_json()
+        data = request.get_json()
         print(2)
-        data = request.data       
-        print(3)
-        data = json.loads(str(request.get_data(), 'utf-8'), encoding='utf-8')
+        # data = request.data
+        # print(3)
+        # data = json.loads(str(request.get_data(), 'utf-8'), encoding='utf-8')
         if data == None:
             print("api error")
             raise BaseException('request json data error')
