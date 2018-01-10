@@ -159,7 +159,7 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
                 arr.append(str(v.get(k)))
 
             if k == 'rank' and v.get(k) is not None:
-                count++
+                count += 1
                 print(v.get(k))
                 print(float(v.get(k)))
             # 中文转英文
