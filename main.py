@@ -9,7 +9,6 @@ from flask import jsonify
 import requests
 import numpy as np
 import ml
-import tornado
 
 
 app = Flask(__name__)
@@ -328,8 +327,8 @@ def api():
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         new_movies = []
 
-        if len(movies) > 8:
-            movies = movies[:8]
+        if len(movies) > 6:
+            movies = movies[:6]
             
         # print('douban')
         # 向豆瓣请求获得更详细的数据
