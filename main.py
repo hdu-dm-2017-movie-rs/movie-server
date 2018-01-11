@@ -156,9 +156,12 @@ def json_to_list(json_data, header=['movieName', 'movieId', 'rank', 'genres']):
     for v in json_data['subjects']:
         arr = []
         for k in header:
+            if k == 'rank':
+                arr.append(float(v.get(k)) / 2)
+                continue
             # 测试用
             if k == 'movieName':
-                arr.append('test for movieName')           
+                arr.append(v.get(k))           
                 continue
             if k != 'genres':
                 arr.append(str(v.get(k)))
@@ -305,12 +308,8 @@ def api():
         # java给的接口{"user": {...}, "recommend":{...}}
         print(request.headers)
         print(type(request.get_json()))
-        # print(request.get_json())
         # data = json.loads(str(request.get_json(), 'utf-8'), encoding='utf-8')
         data = json.loads(request.get_json())
-        print(type(data))
-        # print(request.get_data()[:100])
-        # print(request.get_data()[-100:])
         print(4)
         
         if data == None:
@@ -329,11 +328,12 @@ def api():
         movies = get_recommend_movies(model, user_list, recommend_list, n=10)
         new_movies = []
 
-        if len(movies) > 5:
-            movies = movies[:5]
+        if len(movies) > 8:
+            movies = movies[:8]
             
         # print('douban')
         # 向豆瓣请求获得更详细的数据
+        new_movie = None
         for movie in movies:
             res = requests.get(base_url + str(movie[1]))
             # print('movieId:', movie[1])
@@ -367,7 +367,7 @@ def api():
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     '''测试用api，返回静态数据'''
-    # data = request.get_json()
+    data = request.get_json()
     print(type(data))    
     return data['name']
 

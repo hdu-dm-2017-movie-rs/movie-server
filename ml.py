@@ -96,7 +96,26 @@ class MovieRS():
         return rs_id
 
     # 计算与要推荐的电影之间的余弦相似度
-    def CosineSim(self, x, y, rate=0.6):
+    # def CosineSim(self,x, y, rate=0.8):
+    #     self.X = x
+    #     self.Y = y
+    #     M1 = user_matrix(self.X)
+    #     M2 = user_matrix(self.Y)
+    #     w1 = []
+    #     w2 = []
+    #     sim = []
+    #     result = []
+    #     output = {}
+    #     for i in range(len(self.X)-1):
+    #         w1.append(np.dot(np.array(M1), np.array(M2).T)[i].sum())
+    #         w2.append(math.sqrt((np.array(M1) ** 2)[i].sum()) * math.sqrt((np.array(M2).T ** 2).sum()))
+    #         sim.append(w1[i] / w2[i])
+    #         if sim[i] > rate:
+    #             result.append([sim[i],self.X[i]])
+    #             output = pd.DataFrame(result, columns=['sim', 'recommend']).sort_values(by='sim', ascending=False)
+    #     return np.array([output['recommend'][:10]])
+
+    def CosineSim(self, x, y, rate=0.8):
         self.X = x
         self.Y = y
         M1 = user_matrix(self.X)
